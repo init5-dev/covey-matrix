@@ -8,7 +8,17 @@ const colors = {
 }
 
 const quadrantColor = (color: TColor) => {
-  return colors[color]
+  const entries = Object.entries(colors)
+  
+  if (entries.length) {
+    const match = entries.find(entry => entry[0] === color)
+
+    if (match?.length) {
+      return match[1]
+    }
+  }
+
+  return 'bg-transparent'
 }
 
 export default quadrantColor

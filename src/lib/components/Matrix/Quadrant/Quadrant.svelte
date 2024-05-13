@@ -10,7 +10,7 @@
 	export let vtag: string = '';
 	export let tasks: ITask[];
   export let color: TColor = 'none'
-	export let onCreate: (task: ITask) => void;
+	export let onCreate: () => void;
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
 </script>

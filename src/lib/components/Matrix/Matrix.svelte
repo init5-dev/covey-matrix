@@ -1,32 +1,12 @@
 <script lang="ts">
 	import type { ITask } from './types';
 	import Quadrant from './Quadrant/Quadrant.svelte';
-	import {PrismaClient} from '@prisma/client'
 	import { onMount } from "svelte";
 
 	export let tasks: ITask[];
-
-	const prisma = new PrismaClient()
-
-	// onCreate: (task: ITask) => void
-	// export let onUpdate: (task: ITask) => void;
-	// export let onDelete: (task: ITask) => void
-
-	const load = async () => {
-		tasks = await prisma.Task.findMany()
-	}
-
-	const onCreate = async (task: ITask) => {
-		
-
-		await prisma.Task.create({
-			data: task
-		})
-	};
-
-	const onUpdate = (task: ITask) => {};
-
-	const onDelete = (task: ITask) => {};
+	export let onCreate: () => void;
+	export let onUpdate: (task: ITask) => void;
+	export let onDelete: (task: ITask) => void;
 
 	$: q1 = tasks.filter((task) => task.important && task.urgent);
 	$: q2 = tasks.filter((task) => task.important && !task.urgent);

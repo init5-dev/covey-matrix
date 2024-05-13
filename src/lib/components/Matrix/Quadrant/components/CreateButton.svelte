@@ -2,12 +2,12 @@
   import {PlusOutline} from 'flowbite-svelte-icons'
 	import type { ITask } from "../../types";
 
-	export let onCreate: (task: ITask) => void
+	export let onCreate: () => void
 </script>
 
 <button
 	on:click={() => {
-		 onCreate(task);
+		 onCreate();
 	}}
 	class='transparent-button'
 >
