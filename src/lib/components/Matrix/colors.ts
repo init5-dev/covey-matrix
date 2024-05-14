@@ -1,4 +1,4 @@
-import type { TColor } from "./types"
+import type { TColor } from "../../types"
 
 const colors = {
   'important-urgent': 'green-deck',

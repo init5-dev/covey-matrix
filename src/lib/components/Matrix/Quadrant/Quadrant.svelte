@@ -1,9 +1,7 @@
 <script lang="ts">
-	import type { ITask, TColor } from '../types';
+	import type { ITask, TColor } from "$lib/types";
 	import Task from './components/Task/Task.svelte';
 	import CreateButton from './components/CreateButton.svelte';
-	import { Alert } from 'flowbite-svelte';
-  import qColor from '../colors'
 	import quadrantColor from "../colors";
 
 	export let htag: string = '';

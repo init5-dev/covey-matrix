@@ -1,11 +1,15 @@
-import type { ITask } from "$lib/components/Matrix/types"
+import type { ITask, TRelevance } from "$lib/types"
 import { PrismaClient } from "@prisma/client"
 
 export const load = async () => {
   const prisma = new PrismaClient()
 
   try {
-    const tasks: ITask[] = await prisma.task.findMany()
+    const tasks: ITask[] = (await prisma.task.findMany()).map(task => ({
+      ...task,
+      important: task.important as TRelevance,
+      urgent: task.urgent as TRelevance
+    }))
 
     return {
       success: true,

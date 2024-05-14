@@ -1,4 +1,4 @@
-import type { ITask } from "$lib/components/Matrix/types"
+import type { ITask } from "$lib/types"
 
 
 export const create = async () => {

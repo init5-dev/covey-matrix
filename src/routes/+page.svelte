@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Matrix from '$lib/components/Matrix/Matrix.svelte';
-	import type { ITask } from '$lib/components/Matrix/types';
+	import type { ITask } from '$lib/types';
 	import type { PageData } from './$types';
 
 	// const tasks: ITask[] = [

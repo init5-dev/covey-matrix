@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ITask } from './types';
+	import type { ITask } from "$lib/types";
 	import Quadrant from './Quadrant/Quadrant.svelte';
 	import { onMount } from "svelte";
 

@@ -1,19 +1,15 @@
-import { load } from "$lib/actions/tasks-crud"
-import type { ITask } from "$lib/components/Matrix/types"
+import type { ITask, TRelevance } from "$lib/types"
 import { Prisma, PrismaClient } from "@prisma/client"
 
 export const GET = async () => {
-  const data = {
-    description: '',
-    important: true,
-    urgent: true,
-    hours: 0
-  }
-
   const prisma = new PrismaClient()
 
   try {
-    const tasks: ITask[] = await prisma.task.findMany()
+    const tasks: ITask[] = (await prisma.task.findMany()).map(task => ({
+        ...task,
+        important: task.important as TRelevance,
+        urgent: task.urgent as TRelevance
+    }))
 
     return new Response(JSON.stringify({
       success: true,
