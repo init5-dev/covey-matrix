@@ -1,5 +1,5 @@
 import type { ITask, TRelevance } from "$lib/types"
-import { PrismaClient } from "@prisma/client"
+import prisma from "$lib/prisma"
 
 const isTask = (obj: object) => {
   try {
@@ -23,7 +23,10 @@ const isTask = (obj: object) => {
 }
 
 export const PUT = async ({request}) => {
-  const data = request.body
+  const data = await request.json()
+
+  console.log('PUT')
+  console.log('DATA:\n' + JSON.stringify(data, null, 2))
 
   if (!data || !isTask(data)) {
     return new Response(JSON.stringify({
@@ -32,35 +35,18 @@ export const PUT = async ({request}) => {
     }))
   }
 
-  const {id, description, urgent, important, hours} = Object(data) as ITask
-
-  let updatedTask: ITask = {
-    id,
-    description,
-    urgent,
-    important,
-    hours
-  }
-
-  const prisma = new PrismaClient()
 
   try {
     const response = await prisma.task.update({
       where: {
-        id: updatedTask.id
+        id: data.id
       },
-      data: updatedTask
+      data
     })
-    
-    updatedTask = {
-      ...response,
-      important: response.important as TRelevance,
-      urgent: response.urgent as TRelevance
-    }
 
     return new Response(JSON.stringify({
       success: true,
-      task: updatedTask
+      task: response
     }))
   } catch (err) {
     const error = err as Error

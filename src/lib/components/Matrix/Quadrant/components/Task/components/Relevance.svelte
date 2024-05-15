@@ -1,9 +1,9 @@
 <script lang="ts">
-	export let size: number = 3;
-	export let value: number = 1;
-  export let onSelect: (value: number) => void
-	
-  interface IStar {
+	export let size: number;
+	export let value: number;
+	export let onSelect: (value: number) => void;
+
+	interface IStar {
 		active: boolean;
 	}
 
@@ -11,7 +11,7 @@
 
 	for (let i = 0; i < size; i++) {
 		stars.push({
-			active: i <= value
+			active: i < value
 		});
 	}
 </script>
@@ -20,19 +20,17 @@
 	{#each stars as star, index}
 		<button
 			on:click={() => {
-				star.active = !star.active;
+				stars.forEach(star => star.active = false)
 
-				if (star.active) {
-					for (let i = 0; i <= index; i++) {
-						stars[i].active = true;
-					}
-				} else {
-          for (let i = size - 1; i > index; i--) {
-            stars[i].active = false;
-					}
-        }
+				for(let i=0; i<=index; i++) stars[i].active = true
+				
+				if (index + 1 === value && star.active) {
+					star.active = false
+				}
 
-        onSelect(index)
+				value = stars.filter((star) => star.active).length;
+
+				onSelect(value);
 			}}
 		>
 			{#if star.active}

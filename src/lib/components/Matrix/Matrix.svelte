@@ -8,6 +8,7 @@
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
 
+	// $: tasks = tasks.sort((a, b) => (a.important * a.urgent) - (b.important * b.urgent))
 	$: q1 = tasks.filter((task) => task.important && task.urgent);
 	$: q2 = tasks.filter((task) => task.important && !task.urgent);
 	$: q3 = tasks.filter((task) => !task.important && task.urgent);

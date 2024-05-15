@@ -1,15 +1,10 @@
 import type { ITask, TRelevance } from "$lib/types"
-import { Prisma, PrismaClient } from "@prisma/client"
+import { Prisma } from "@prisma/client"
+import prisma from "$lib/prisma"
 
 export const GET = async () => {
-  const prisma = new PrismaClient()
-
   try {
-    const tasks: ITask[] = (await prisma.task.findMany()).map(task => ({
-        ...task,
-        important: task.important as TRelevance,
-        urgent: task.urgent as TRelevance
-    }))
+    const tasks = await prisma.task.findMany()
 
     return new Response(JSON.stringify({
       success: true,

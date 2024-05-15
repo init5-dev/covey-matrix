@@ -2,6 +2,7 @@
 	import Matrix from '$lib/components/Matrix/Matrix.svelte';
 	import type { ITask } from '$lib/types';
 	import type { PageData } from './$types';
+	import { onMount } from 'svelte';
 
 	// const tasks: ITask[] = [
 	//   {
@@ -36,15 +37,62 @@
 
 	export let data: PageData;
 
-	let tasks = data.tasks;
-	let error = '';
-  let message = ''
-	let allowCreate = true;
+	let tasks: ITask[] | undefined;
+	let updated: boolean;
+	let error: string;
+	let message: string;
+	let allowCreate: boolean;
+	let updatedTaskId: string | null
+
+	onMount(() => {
+		tasks = data.tasks;
+		updated = false;
+		error = '';
+		message = '';
+		allowCreate = true;
+		updatedTaskId = null
+	});
+
+	$: (async () => {
+		if (updated) {
+			await load();
+			updated = false;
+
+			const updatedTaskEl = document.getElementById(updatedTaskId)
+
+			if (updatedTaskEl) {
+				updatedTaskEl.scrollIntoView({
+					behavior: 'smooth'
+				})
+			}
+		}
+	})();
+
+	const load = async () => {
+		let response;
+		try {
+			response = await fetch('/api/v1/load');
+
+			if (response.ok) {
+				const data = await response.json();
+
+				if (data.success) {
+					tasks = data.tasks;
+				} else {
+					error = data.error;
+				}
+			} else {
+				error = response.statusText;
+			}
+		} catch (e) {
+			error = (e as Error).message;
+		}
+	};
 
 	const onCreate = async () => {
 		if (!allowCreate) return;
 
-    message = ''
+		message = '';
 
 		try {
 			let response = await fetch('/api/v1/create');
@@ -53,23 +101,8 @@
 				const data = await response.json();
 
 				if (data.success) {
-					message = 'Empty task created'
-
-          try {
-            response = await fetch('/api/v1/load');
-
-            if (response.ok) {
-              const data = await response.json()
-              
-              if (data.success) {
-                tasks = data.tasks
-              } else {
-                error = data.error
-              }
-            }
-          } catch (error) {
-            error = response.statusText;
-          }
+					message = 'Empty task created';
+					await load();
 				} else {
 					allowCreate = false;
 				}
@@ -77,29 +110,50 @@
 				error = response.statusText;
 			}
 		} catch (err) {
-      error = (err as Error).message
-    }
-
-		// response = await fetch('/api/v1/load')
-
-		// if (response.ok) {
-		//   tasks = await response.json()
-		// }
+			error = (err as Error).message;
+		}
 	};
 
-	const onUpdate = (task: ITask) => {};
+	const onUpdate = async (task: ITask) => {
+		try {
+			const response = await fetch('/api/v1/update', {
+				method: 'PUT',
+				body: JSON.stringify(task),
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+
+				if (data.success) {
+					updated = true;
+					updatedTaskId = String(data.task.id)
+				} else {
+					error = data.error;
+				}
+			} else {
+				error = response.statusText;
+			}
+		} catch (err) {
+			error = (err as Error).message;
+		}
+	};
 
 	const onDelete = (task: ITask) => {};
 </script>
 
 <div class="h-4">
-  {#if error}
-	<strong class="text-red-300 text-center w-full m-4">{error}</strong>
-{/if}
+	{#if error}
+		<strong class="m-4 w-full text-center text-red-300">{error}</strong>
+	{/if}
 
-{#if message}
-	<strong class="text-lime-300 text-center w-full m-4">{message}</strong>
-{/if}
+	{#if message}
+		<strong class="m-4 w-full text-center text-lime-300">{message}</strong>
+	{/if}
 </div>
 
-<Matrix {tasks} {onCreate} {onUpdate} {onDelete} />
+{#if tasks?.length}
+	<Matrix {tasks} {onCreate} {onUpdate} {onDelete} />
+{/if}

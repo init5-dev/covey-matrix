@@ -1,5 +1,6 @@
 import type { ITask, TRelevance } from "$lib/types"
-import { Prisma, PrismaClient } from "@prisma/client"
+import { Prisma } from "@prisma/client"
+import prisma from "$lib/prisma"
 
 export const GET = async () => {
   const data = {
@@ -8,8 +9,6 @@ export const GET = async () => {
     urgent: 1,
     hours: 0
   }
-
-  const prisma = new PrismaClient()
 
   try {
     const response = await prisma.task.create({
