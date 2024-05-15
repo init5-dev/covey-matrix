@@ -12,8 +12,6 @@
 	export let onCreate: () => void;
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
-
-	console.log('QUADRANT UPDATED TASK ID:', updatedTaskId)
 </script>
 
 <div class={`flex gap-4 w-full border border-gray-200 p-4 ${color && quadrantColor(color)}`}>

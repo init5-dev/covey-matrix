@@ -4,6 +4,7 @@
 	import Relevance from './components/Relevance.svelte';
 	import UpdateButton from './components/UpdateButton.svelte';
 	import { onMount } from 'svelte';
+	import Hours from './components/Hours.svelte';
 
 	export let task: ITask;
 	export let focus: boolean = false;
@@ -11,19 +12,15 @@
 	export let onDelete: (task: ITask) => void;
 
 	let updating = false;
+	let error = '';
 
-	let {id, description, important, urgent, hours} = task
-
-	$: console.log(`FOCUS: ${focus}`);
+	let { id, description, important, urgent, hours } = task;
 
 	onMount(() => {
-		if (focus) {
-			console.log('FOCUS')
-		}
-		const inputEl = document.getElementById('description-input')
+		const inputEl = document.getElementById('description-input');
 
 		if (inputEl) {
-			focus && inputEl.focus()
+			focus && inputEl.focus();
 		}
 	});
 
@@ -36,50 +33,105 @@
 		urgent = value as TRelevance;
 		updating = true;
 	};
+
+	$: (() => {
+		const inputEl = document.getElementById('description-input')
+
+		if (inputEl) {
+			inputEl.focus()
+		}
+	})()
 </script>
 
-<form 
-id={String(id)} 
-on:focusout={()=>{
-	focus = false
-}}
-class={`stars ${updating && `border border-gray-200 ${focus ? 'border border-solid ' : 'border border-dashed'}`}`}>
-	<input
-		id="description-input"
-		type="text"
-		bind:value={description}
-		on:keypress={() => {
-			task.description !== description ? updating = true: null;
-		}}
-		on:focusin={() => {
-			focus = true
-			task.description !== description ? updating = true: null;
-		}}
-	/>
-	<div class="flex flex-col items-center">
-		<span class="text-center">Important</span>
-		<Relevance size={3} value={important} onSelect={selectImportance} setFocus={()=>{focus = true}}/>
+<form
+	id={String(id)}
+	on:focusout={() => {
+		focus = false;
+	}}
+	class={`task-container ${updating && `border border-gray-200 ${focus ? 'border border-solid ' : 'border border-dashed'}`}`}
+>
+	<div class="flex gap-4">
+		<input
+			id="description-input"
+			type="text"
+			bind:value={description}
+			on:keyup={() => {
+				task.description !== description ? (updating = true) : null;
+				updating=true
+				focus=true
+				error = '';
+			}}
+			on:focusin={() => {
+				focus = true;
+				updating=true
+				task.description !== description ? (updating = true) : null;
+			}}
+		/>
+		<div class="section">
+			<span class="text-center">Important</span>
+			<Relevance
+				size={3}
+				value={important}
+				onSelect={selectImportance}
+				setFocus={() => {
+					focus = true;
+				}}
+			/>
+		</div>
+		<div class="section">
+			<span class="text-center">Urgent</span>
+			<Relevance
+				size={3}
+				value={urgent}
+				onSelect={selectUrgency}
+				setFocus={() => {
+					focus = true;
+				}}
+			/>
+		</div>
+		<div class="section">
+			<span class="text-center">Hours</span>
+			<Hours
+				hours={String(hours)}
+				onChange={(value) => {
+					console.log(hours, value);
+					hours = value;
+				}}
+			/>
+		</div>
+		<UpdateButton
+			{task}
+			onUpdate={() => {
+				if (!description) {
+					error = 'Write the task description';
+					focus = true
+					return
+				}
+
+				updating = false;
+				onUpdate({
+					id,
+					description,
+					important,
+					urgent,
+					hours
+				});
+			}}
+		/>
+		<DeleteButton {task} {onDelete} />
 	</div>
-	<div class="flex flex-col items-center">
-		<span class="text-center">Urgent</span>
-		<Relevance size={3} value={urgent} onSelect={selectUrgency} setFocus={()=>{focus = true}}/>
-	</div>
-	<UpdateButton {task} onUpdate={()=> {
-		updating = false
-		onUpdate({
-			id,
-			description,
-			important,
-			urgent,
-			hours
-		})
-	}} />
-	<DeleteButton {task} {onDelete} />
+	{#if error}
+		<strong class="ml-3 p-0 text-sm text-red-300">{error}</strong>
+	{/if}
 </form>
 
 <style lang="postcss">
-	.stars {
-		@apply flex h-16 w-full items-center gap-2;
+	.task-container {
+		@apply w-full text-sm p-4;
+	}
+
+	.section {
+		@apply flex flex-col items-center gap-2;
 	}
 
 	input {

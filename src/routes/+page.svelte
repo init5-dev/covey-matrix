@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Matrix from '$lib/components/Matrix/Matrix.svelte';
 	import type { ITask } from '$lib/types';
-	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 
 	// const tasks: ITask[] = [
@@ -39,14 +38,12 @@
 	let updated: boolean;
 	let error: string;
 	let message: string;
-	let allowCreate: boolean;
 	let updatedTaskId: string | null;
 
 	onMount(async () => {
 		updated = false;
 		error = '';
 		message = '';
-		allowCreate = true;
 		updatedTaskId = null;
 
 		await load()
@@ -54,7 +51,6 @@
 
 	$: (async () => {
 		if (updated) {
-			console.log('RELOADING...')
 			await load();
 			updated = false;
 
@@ -67,8 +63,21 @@
 					});
 				}
 			}
+
+			error = ''
+			message = ''
 		}
 	})();
+
+	$: (error || message) && (() => {
+		const messageTags = document.getElementsByClassName('message-tag ')
+
+		for (let tag of messageTags) {
+			tag.scrollIntoView({
+				behavior: 'smooth'
+			})
+		}
+	})()
 
 	const load = async () => {
 		let response;
@@ -92,8 +101,6 @@
 	};
 
 	const onCreate = async () => {
-		if (!allowCreate) return;
-
 		message = '';
 
 		try {
@@ -107,7 +114,7 @@
 					updatedTaskId = String(data.task.id);
 					updated = true
 				} else {
-					allowCreate = false;
+					error = data.error
 				}
 			} else {
 				error = response.statusText;
@@ -119,7 +126,6 @@
 
 	const onUpdate = async (task: ITask) => {
 		try {
-			console.log('UPDATE')
 			const response = await fetch('/api/v1/update', {
 				method: 'PUT',
 				body: JSON.stringify(task),
@@ -176,11 +182,11 @@
 
 <div class="h-4">
 	{#if error}
-		<strong class="m-4 w-full text-center text-red-300">{error}</strong>
+		<strong class="message-tag m-4 w-full text-center text-red-300">{error}</strong>
 	{/if}
 
 	{#if message}
-		<strong class="m-4 w-full text-center text-lime-300">{message}</strong>
+		<strong class="message-tag m-4 w-full text-center text-lime-300">{message}</strong>
 	{/if}
 </div>
 

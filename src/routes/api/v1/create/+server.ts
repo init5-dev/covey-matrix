@@ -3,7 +3,7 @@ import prisma from "$lib/prisma"
 
 export const GET = async () => {
   const data = {
-    description: '',
+    description: 'New task',
     important: 1,
     urgent: 1,
     hours: 0

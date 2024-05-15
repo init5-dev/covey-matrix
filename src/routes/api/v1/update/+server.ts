@@ -1,8 +1,9 @@
 import prisma from "$lib/prisma"
+import type { ITask } from "$lib/types.js"
 
 const isTask = (obj: unknown) => {
   try {
-    const {id, description, urgent, important, hours} = obj
+    const {id, description, urgent, important, hours} = obj as ITask
     if (typeof id !== 'number') return false
     if (typeof description !== 'string') return false
     if (typeof urgent !== 'number') return false
