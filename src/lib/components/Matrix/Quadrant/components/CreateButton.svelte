@@ -1,15 +1,16 @@
 <script lang="ts">
-  import {PlusOutline} from 'flowbite-svelte-icons'
-	import type { ITask } from "$lib/types";
+	import { PlusOutline } from 'flowbite-svelte-icons';
+	import type { ITask } from '$lib/types';
 
-	export let onCreate: () => void
+	export let onCreate: () => void;
 </script>
 
 <button
+	type="submit"
 	on:click={() => {
-		 onCreate();
+		onCreate();
 	}}
-	class='transparent-button'
+	class="transparent-button"
 >
 	<PlusOutline />
 </button>

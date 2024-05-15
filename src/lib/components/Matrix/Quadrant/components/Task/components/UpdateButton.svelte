@@ -8,7 +8,8 @@
 </script>
 
 <button
-	on:click={() => {
+	on:click={(e) => {
+		e.preventDefault
 		onUpdate(task);
 	}}
 	class='transparent-button'

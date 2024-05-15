@@ -2,6 +2,7 @@
 	export let size: number;
 	export let value: number;
 	export let onSelect: (value: number) => void;
+	export let setFocus: () => void;
 
 	interface IStar {
 		active: boolean;
@@ -19,7 +20,8 @@
 <div class="flex items-center justify-center">
 	{#each stars as star, index}
 		<button
-			on:click={() => {
+			on:click={(e) => {
+				e.preventDefault()
 				stars.forEach(star => star.active = false)
 
 				for(let i=0; i<=index; i++) stars[i].active = true
@@ -30,6 +32,7 @@
 
 				value = stars.filter((star) => star.active).length;
 
+				setFocus()
 				onSelect(value);
 			}}
 		>

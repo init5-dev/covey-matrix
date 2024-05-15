@@ -4,6 +4,7 @@
 	import CreateButton from './components/CreateButton.svelte';
 	import quadrantColor from "../colors";
 
+	export let updatedTaskId: string | null = null
 	export let htag: string = '';
 	export let vtag: string = '';
 	export let tasks: ITask[];
@@ -11,6 +12,8 @@
 	export let onCreate: () => void;
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
+
+	console.log('QUADRANT UPDATED TASK ID:', updatedTaskId)
 </script>
 
 <div class={`flex gap-4 w-full border border-gray-200 p-4 ${color && quadrantColor(color)}`}>
@@ -29,7 +32,7 @@
 		>
 			{#if tasks.length}
 				{#each tasks as task}
-					<Task {task} {onUpdate} {onDelete} />
+					<Task {task} {onUpdate} {onDelete} focus={String(task.id) === updatedTaskId}/>
 				{/each}
 			{:else}
 				<div>

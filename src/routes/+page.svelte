@@ -35,35 +35,37 @@
 	//   },
 	// ]
 
-	export let data: PageData;
-
 	let tasks: ITask[] | undefined;
 	let updated: boolean;
 	let error: string;
 	let message: string;
 	let allowCreate: boolean;
-	let updatedTaskId: string | null
+	let updatedTaskId: string | null;
 
-	onMount(() => {
-		tasks = data.tasks;
+	onMount(async () => {
 		updated = false;
 		error = '';
 		message = '';
 		allowCreate = true;
-		updatedTaskId = null
+		updatedTaskId = null;
+
+		await load()
 	});
 
 	$: (async () => {
 		if (updated) {
+			console.log('RELOADING...')
 			await load();
 			updated = false;
 
-			const updatedTaskEl = document.getElementById(updatedTaskId)
+			if (updatedTaskId) {
+				const updatedTaskEl = document.getElementById(updatedTaskId);
 
-			if (updatedTaskEl) {
-				updatedTaskEl.scrollIntoView({
-					behavior: 'smooth'
-				})
+				if (updatedTaskEl) {
+					updatedTaskEl.scrollIntoView({
+						behavior: 'smooth'
+					});
+				}
 			}
 		}
 	})();
@@ -102,7 +104,8 @@
 
 				if (data.success) {
 					message = 'Empty task created';
-					await load();
+					updatedTaskId = String(data.task.id);
+					updated = true
 				} else {
 					allowCreate = false;
 				}
@@ -116,6 +119,7 @@
 
 	const onUpdate = async (task: ITask) => {
 		try {
+			console.log('UPDATE')
 			const response = await fetch('/api/v1/update', {
 				method: 'PUT',
 				body: JSON.stringify(task),
@@ -128,8 +132,8 @@
 				const data = await response.json();
 
 				if (data.success) {
+					updatedTaskId = String(data.task.id);
 					updated = true;
-					updatedTaskId = String(data.task.id)
 				} else {
 					error = data.error;
 				}
@@ -141,7 +145,33 @@
 		}
 	};
 
-	const onDelete = (task: ITask) => {};
+	const onDelete = async (task: ITask) => {
+		try {
+			const response = await fetch('/api/v1/delete', {
+				method: 'DELETE',
+				body: JSON.stringify({
+					id: task.id
+				}),
+				headers: {
+					'content-type': 'application/json'
+				}
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+
+				if (data.success) {
+					updated = true;
+				} else {
+					error = data.error;
+				}
+			} else {
+				error = response.statusText;
+			}
+		} catch (err) {
+			error = (err as Error).message;
+		}
+	};
 </script>
 
 <div class="h-4">
@@ -154,6 +184,6 @@
 	{/if}
 </div>
 
-{#if tasks?.length}
-	<Matrix {tasks} {onCreate} {onUpdate} {onDelete} />
+{#if tasks}
+	<Matrix {tasks} {onCreate} {onUpdate} {onDelete} {updatedTaskId}/>
 {/if}

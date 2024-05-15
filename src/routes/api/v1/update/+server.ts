@@ -1,10 +1,8 @@
-import type { ITask, TRelevance } from "$lib/types"
 import prisma from "$lib/prisma"
 
-const isTask = (obj: object) => {
+const isTask = (obj: unknown) => {
   try {
-    const {id, description, urgent, important, hours} = obj as ITask
-
+    const {id, description, urgent, important, hours} = obj
     if (typeof id !== 'number') return false
     if (typeof description !== 'string') return false
     if (typeof urgent !== 'number') return false
@@ -35,14 +33,17 @@ export const PUT = async ({request}) => {
     }))
   }
 
-
   try {
+    await prisma.$connect()
+
     const response = await prisma.task.update({
       where: {
         id: data.id
       },
       data
     })
+
+    await prisma.$disconnect()
 
     return new Response(JSON.stringify({
       success: true,

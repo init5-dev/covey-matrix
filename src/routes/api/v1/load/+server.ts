@@ -1,10 +1,15 @@
-import type { ITask, TRelevance } from "$lib/types"
 import { Prisma } from "@prisma/client"
 import prisma from "$lib/prisma"
 
 export const GET = async () => {
   try {
-    const tasks = await prisma.task.findMany()
+    await prisma.$connect()
+
+    const tasks = await prisma.task.findMany({})
+
+    await prisma.$disconnect()
+
+    console.log(tasks.reduce((accum, task) => accum += `I: ${task.important}; U: ${task.urgent}; H: ${task.hours}\n`, ''))
 
     return new Response(JSON.stringify({
       success: true,
