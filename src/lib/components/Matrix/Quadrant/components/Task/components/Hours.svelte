@@ -21,14 +21,16 @@
 		(Number(hours) === 0 && startingZeros() > 1)
 			? hours.slice(1)
 			: hours;
-  $: onChange(Number(hours))
+
 
 	const increment = () => {
 		if (value < max) hours = String(value + 1);
+		onChange(Number(hours))
 	};
 
 	const decrement = () => {
 		if (value > 0) hours = String(value - 1);
+		onChange(Number(hours))
 	};
 
 	const validateKey = (e: KeyboardEvent) => {
@@ -39,7 +41,7 @@
 </script>
 
 <div class="hours-container">
-	<input type="text" bind:value={hours} on:keypress={validateKey} />
+	<input type="text" bind:value={hours} on:keypress={validateKey} on:focus={()=>{onChange(Number(hours))}}/>
 	<div class="flex gap-1">
 		<button on:click={increment} disabled={value === max}>+</button>
 		<button on:click={decrement} disabled={value === 0}>-</button>

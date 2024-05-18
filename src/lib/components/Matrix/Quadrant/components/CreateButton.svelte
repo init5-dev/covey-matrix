@@ -13,4 +13,5 @@
 	class="transparent-button"
 >
 	<PlusOutline />
+	Create task
 </button>

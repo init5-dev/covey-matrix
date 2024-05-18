@@ -9,8 +9,6 @@ export const GET = async () => {
 
     await prisma.$disconnect()
 
-    console.log(tasks.reduce((accum, task) => accum += `I: ${task.important}; U: ${task.urgent}; H: ${task.hours}\n`, ''))
-
     return new Response(JSON.stringify({
       success: true,
       tasks

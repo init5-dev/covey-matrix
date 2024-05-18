@@ -5,6 +5,8 @@
 	import UpdateButton from './components/UpdateButton.svelte';
 	import { onMount } from 'svelte';
 	import Hours from './components/Hours.svelte';
+	import Dialog from '$lib/components/Dialog/Dialog.svelte';
+	import type { IDialog } from '$lib/components/Dialog/types';
 
 	export let task: ITask;
 	export let focus: boolean = false;
@@ -13,11 +15,17 @@
 
 	let updating = false;
 	let error = '';
+	let dialog: IDialog = {
+		title: '',
+		message: '',
+		type: 'INFORMATION',
+		onOkClick: () => {}
+	};
 
 	let { id, description, important, urgent, hours } = task;
 
 	onMount(() => {
-		const inputEl = document.getElementById('description-input');
+		const inputEl = document.getElementById(`description-input-${task.id}`);
 
 		if (inputEl) {
 			focus && inputEl.focus();
@@ -34,6 +42,14 @@
 		updating = true;
 	};
 
+	const confirmDelete = () => {
+		dialog.open = true
+		dialog.title = 'Confirm deletion';
+		dialog.message = 'Do you wanna delete the task?';
+		dialog.type = 'CONFIRMATION';
+		dialog.onOkClick = () => {onDelete(task)}
+	};
+
 	$: (() => {
 		const inputEl = document.getElementById('description-input')
 
@@ -43,6 +59,13 @@
 	})()
 </script>
 
+<Dialog
+	open={dialog.open}
+	modalType={dialog.type}
+	title={dialog.title}
+	message={dialog.message}
+	onOkClick={dialog.onOkClick}
+/>
 <form
 	id={String(id)}
 	on:focusout={() => {
@@ -52,7 +75,7 @@
 >
 	<div class="flex gap-4">
 		<input
-			id="description-input"
+			id={`description-input-${task.id}`}
 			type="text"
 			bind:value={description}
 			on:keyup={() => {
@@ -96,6 +119,8 @@
 				onChange={(value) => {
 					console.log(hours, value);
 					hours = value;
+					updating = true
+					focus = true
 				}}
 			/>
 		</div>
@@ -118,7 +143,7 @@
 				});
 			}}
 		/>
-		<DeleteButton {task} {onDelete} />
+		<DeleteButton {confirmDelete} />
 	</div>
 	{#if error}
 		<strong class="ml-3 p-0 text-sm text-red-300">{error}</strong>

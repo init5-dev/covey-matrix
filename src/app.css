@@ -28,7 +28,7 @@ body {
 }
 
 .transparent-button {
-  @apply bg-transparent border border-solid border-gray-300 ring-0 w-8 h-8 flex items-center justify-center rounded
+  @apply text-white bg-transparent border border-solid border-gray-300 ring-0 p-2 flex items-center justify-center rounded
 }
 
 .transparent-button:hover {

@@ -1,24 +1,27 @@
 <script lang="ts">
 	import type { ITask } from "$lib/types";
 	import Quadrant from './Quadrant/Quadrant.svelte';
+	import CreateButton from "./Quadrant/components/CreateButton.svelte";
 
-	export let tasks: ITask[];
+	export let q1: ITask[];
+	export let q2: ITask[];
+	export let q3: ITask[];
+	export let q4: ITask[];
 	export let updatedTaskId: string | null = null
 	export let onCreate: () => void;
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
 
-	// $: tasks = tasks.sort((a, b) => (a.important * a.urgent) - (b.important * b.urgent))
-	$: q1 = tasks.filter((task) => task.important && task.urgent);
-	$: q2 = tasks.filter((task) => task.important && !task.urgent);
-	$: q3 = tasks.filter((task) => !task.important && task.urgent);
-	$: q4 = tasks.filter((task) => !task.important && !task.urgent);
-
 </script>
 
-<div class="m-4 grid grid-cols-2 gap-2 text-white">
-	<Quadrant {updatedTaskId} color='important-urgent' vtag="Important" htag="Urgent" tasks={q2} {onCreate} {onUpdate} {onDelete} />
-	<Quadrant {updatedTaskId} color='important-not-urgent' htag="Not urgent"  tasks={q1} {onCreate} {onUpdate} {onDelete} />
-	<Quadrant {updatedTaskId} color='not-important-urgent' vtag="Not important" tasks={q3} {onCreate} {onUpdate} {onDelete} />
-	<Quadrant {updatedTaskId} color='not-important-not-urgent' tasks={q4} {onCreate} {onUpdate} {onDelete} />
+<div class="m-4">
+	<div class="mb-4 flex">
+		<CreateButton {onCreate} />
+	</div>
+	<div class="grid grid-cols-2 gap-2 text-white">
+		<Quadrant {updatedTaskId} color='important-urgent' vtag="Important" htag="Urgent" tasks={q1} {onUpdate} {onDelete} />
+		<Quadrant {updatedTaskId} color='important-not-urgent' htag="Not urgent"  tasks={q2} {onUpdate} {onDelete} />
+		<Quadrant {updatedTaskId} color='not-important-urgent' vtag="Not important" tasks={q3} {onUpdate} {onDelete} />
+		<Quadrant {updatedTaskId} color='not-important-not-urgent' tasks={q4} {onUpdate} {onDelete} />
+	</div>
 </div>

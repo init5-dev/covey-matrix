@@ -3,13 +3,12 @@
   import {TrashBinOutline} from 'flowbite-svelte-icons'
 	import type { ITask } from "$lib/types";
 
-	export let task: ITask
-	export let onDelete: (task: ITask) => void
+	export let confirmDelete: () => void
 </script>
 
 <button
 	on:click={() => {
-		onDelete(task);
+		confirmDelete();
 	}}
 	class='transparent-button'
 >

@@ -36,48 +36,67 @@
 
 	let tasks: ITask[] | undefined;
 	let updated: boolean;
+	let deleted: boolean;
 	let error: string;
 	let message: string;
 	let updatedTaskId: string | null;
+	let q1: ITask[] = [];
+	let q2: ITask[] = [];
+	let q3: ITask[] = [];
+	let q4: ITask[] = [];
+
+	$: tasks?.length ? fillQuadrants() : null;
+
+	const fillQuadrants = () => {
+		q1 = tasks?.length ? tasks.filter((task) => task.important && task.urgent) : [];
+		q2 = tasks?.length ? tasks?.filter((task) => task.important && !task.urgent) : [];
+		q3 = tasks?.length ? tasks?.filter((task) => !task.important && task.urgent) : [];
+		q4 = tasks?.length ? tasks?.filter((task) => !task.important && !task.urgent) : [];
+	};
 
 	onMount(async () => {
 		updated = false;
+		deleted = false;
 		error = '';
 		message = '';
 		updatedTaskId = null;
 
-		await load()
+		await load();
 	});
 
-	$: (async () => {
-		if (updated) {
-			await load();
-			updated = false;
+	$: updated &&
+		(async () => {
+			if (updated) {
+				console.log('RELOADING...');
+				await load();
 
-			if (updatedTaskId) {
-				const updatedTaskEl = document.getElementById(updatedTaskId);
+				// if (updatedTaskId) {
+				// 	const updatedTaskEl = document.getElementById(updatedTaskId);
 
-				if (updatedTaskEl) {
-					updatedTaskEl.scrollIntoView({
-						behavior: 'smooth'
-					});
-				}
+				// 	if (updatedTaskEl) {
+				// 		updatedTaskEl.scrollIntoView({
+				// 			behavior: 'smooth'
+				// 		});
+				// 	}
+				// }
+
+				error = '';
+				message = '';
+				updated = false;
+				deleted = false;
 			}
+		})();
 
-			error = ''
-			message = ''
-		}
-	})();
+	$: (error || message) &&
+		(() => {
+			const messageTags = document.getElementsByClassName('message-tag ');
 
-	$: (error || message) && (() => {
-		const messageTags = document.getElementsByClassName('message-tag ')
-
-		for (let tag of messageTags) {
-			tag.scrollIntoView({
-				behavior: 'smooth'
-			})
-		}
-	})()
+			for (let tag of messageTags) {
+				tag.scrollIntoView({
+					behavior: 'smooth'
+				});
+			}
+		})();
 
 	const load = async () => {
 		let response;
@@ -110,11 +129,10 @@
 				const data = await response.json();
 
 				if (data.success) {
-					message = 'Empty task created';
 					updatedTaskId = String(data.task.id);
-					updated = true
+					updated = true;
 				} else {
-					error = data.error
+					error = data.error;
 				}
 			} else {
 				error = response.statusText;
@@ -123,6 +141,8 @@
 			error = (err as Error).message;
 		}
 	};
+
+	const handleUpdating = (task: ITask) => {};
 
 	const onUpdate = async (task: ITask) => {
 		try {
@@ -167,7 +187,10 @@
 				const data = await response.json();
 
 				if (data.success) {
+					// tasks = tasks?.filter(task => task.id !== data.task.id)
+					console.log('SUCCESS ON DELETING:', JSON.stringify(data.task));
 					updated = true;
+					deleted = true;
 				} else {
 					error = data.error;
 				}
@@ -190,6 +213,8 @@
 	{/if}
 </div>
 
-{#if tasks}
-	<Matrix {tasks} {onCreate} {onUpdate} {onDelete} {updatedTaskId}/>
-{/if}
+{#key tasks}
+	{#if tasks}
+		<Matrix {q1} {q2} {q3} {q4} {onCreate} {onUpdate} {onDelete} {updatedTaskId} />
+	{/if}
+{/key}

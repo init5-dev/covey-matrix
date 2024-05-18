@@ -24,9 +24,6 @@ const isTask = (obj: unknown) => {
 export const PUT = async ({request}) => {
   const data = await request.json()
 
-  console.log('PUT')
-  console.log('DATA:\n' + JSON.stringify(data, null, 2))
-
   if (!data || !isTask(data)) {
     return new Response(JSON.stringify({
       success: false,

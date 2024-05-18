@@ -2,16 +2,18 @@ import { Prisma } from "@prisma/client"
 import prisma from "$lib/prisma"
 
 export const GET = async () => {
-  const data = {
-    description: 'New task',
-    important: 1,
-    urgent: 1,
-    hours: 0
-  }
-
   try {
 
     await prisma.$connect()
+
+    const index = (await prisma.task.count()) + 1
+
+    const data = {
+      description: `Task #${index}`,
+      important: 1,
+      urgent: 1,
+      hours: 0
+    }
 
     const task = await prisma.task.create({
       data
