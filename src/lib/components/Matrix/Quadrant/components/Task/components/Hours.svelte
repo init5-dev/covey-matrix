@@ -1,4 +1,8 @@
 <script lang="ts">
+	import type { ITask } from "$lib/types";
+	import { uniqid } from "$lib/utils/uniqid";
+
+	export let task: ITask
 	export let hours: string = '0';
 	export let max: number = 2920;
   export let onChange: (value: number) => void
@@ -40,7 +44,7 @@
 	};
 </script>
 
-<div class="hours-container">
+<div id={uniqid()} class={`hours-container task-${task.id}-component`}>
 	<input type="text" bind:value={hours} on:keypress={validateKey} on:focus={()=>{onChange(Number(hours))}}/>
 	<div class="flex gap-1">
 		<button on:click={increment} disabled={value === max}>+</button>

@@ -3,49 +3,18 @@
 	import type { ITask } from '$lib/types';
 	import { onMount } from 'svelte';
 
-	// const tasks: ITask[] = [
-	//   {
-	//     id: '1',
-	//     description: 'Sacar la basura',
-	//     urgent: false,
-	//     important: true,
-	//     hours: 0
-	//   },
-	//   {
-	//     id: '2',
-	//     description: 'Terminar el encargo',
-	//     urgent: true,
-	//     important: true,
-	//     hours: 5
-	//   },
-	//   {
-	//     id: '3',
-	//     description: 'Responder los emails',
-	//     urgent: true,
-	//     important: true,
-	//     hours: 1
-	//   },
-	//   {
-	//     id: '4',
-	//     description: 'Escribir próximo capítulo de mi novela',
-	//     urgent: false,
-	//     important: true,
-	//     hours: 0
-	//   },
-	// ]
-
 	let tasks: ITask[] | undefined;
 	let updated: boolean;
 	let deleted: boolean;
 	let error: string;
 	let message: string;
-	let updatedTaskId: string | null;
+	// let updatedTaskId: string | null;
 	let q1: ITask[] = [];
 	let q2: ITask[] = [];
 	let q3: ITask[] = [];
 	let q4: ITask[] = [];
 
-	$: tasks?.length ? fillQuadrants() : null;
+	$: tasks ? fillQuadrants() : null;
 
 	const fillQuadrants = () => {
 		q1 = tasks?.length ? tasks.filter((task) => task.important && task.urgent) : [];
@@ -59,7 +28,7 @@
 		deleted = false;
 		error = '';
 		message = '';
-		updatedTaskId = null;
+		// updatedTaskId = null;
 
 		await load();
 	});
@@ -67,18 +36,7 @@
 	$: updated &&
 		(async () => {
 			if (updated) {
-				console.log('RELOADING...');
 				await load();
-
-				// if (updatedTaskId) {
-				// 	const updatedTaskEl = document.getElementById(updatedTaskId);
-
-				// 	if (updatedTaskEl) {
-				// 		updatedTaskEl.scrollIntoView({
-				// 			behavior: 'smooth'
-				// 		});
-				// 	}
-				// }
 
 				error = '';
 				message = '';
@@ -129,7 +87,7 @@
 				const data = await response.json();
 
 				if (data.success) {
-					updatedTaskId = String(data.task.id);
+					// updatedTaskId = String(data.task.id);
 					updated = true;
 				} else {
 					error = data.error;
@@ -141,8 +99,6 @@
 			error = (err as Error).message;
 		}
 	};
-
-	const handleUpdating = (task: ITask) => {};
 
 	const onUpdate = async (task: ITask) => {
 		try {
@@ -158,7 +114,7 @@
 				const data = await response.json();
 
 				if (data.success) {
-					updatedTaskId = String(data.task.id);
+					// updatedTaskId = String(data.task.id);
 					updated = true;
 				} else {
 					error = data.error;
@@ -172,6 +128,9 @@
 	};
 
 	const onDelete = async (task: ITask) => {
+		const tasksSave = JSON.parse(JSON.stringify(tasks))
+		tasks = tasks?.filter(t => t.id !== task.id)
+
 		try {
 			const response = await fetch('/api/v1/delete', {
 				method: 'DELETE',
@@ -186,19 +145,21 @@
 			if (response.ok) {
 				const data = await response.json();
 
-				if (data.success) {
-					// tasks = tasks?.filter(task => task.id !== data.task.id)
-					console.log('SUCCESS ON DELETING:', JSON.stringify(data.task));
+				if (data.success) {	
+					tasks = tasks
 					updated = true;
 					deleted = true;
 				} else {
 					error = data.error;
+					tasks = tasksSave
 				}
 			} else {
 				error = response.statusText;
+				tasks = tasksSave
 			}
 		} catch (err) {
 			error = (err as Error).message;
+			tasks = tasksSave
 		}
 	};
 </script>
@@ -214,7 +175,5 @@
 </div>
 
 {#key tasks}
-	{#if tasks}
-		<Matrix {q1} {q2} {q3} {q4} {onCreate} {onUpdate} {onDelete} {updatedTaskId} />
-	{/if}
+		<Matrix {q1} {q2} {q3} {q4} {onCreate} {onUpdate} {onDelete} />
 {/key}

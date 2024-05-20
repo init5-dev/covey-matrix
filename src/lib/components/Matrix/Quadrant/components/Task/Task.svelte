@@ -6,97 +6,168 @@
 	import { onMount } from 'svelte';
 	import Hours from './components/Hours.svelte';
 	import Dialog from '$lib/components/Dialog/Dialog.svelte';
-	import type { IDialog } from '$lib/components/Dialog/types';
+	import type { IDialog, IState } from '$lib/components/Dialog/types';
+	import { uniqid } from '$lib/utils/uniqid';
 
 	export let task: ITask;
-	export let focus: boolean = false;
+	export let states: IState[];
+	export let onChange: (id: number | null) => void;
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
 
 	let updating = false;
+	let taskEl: HTMLElement | null | undefined
+
+	$: changing = states.find((state) => state.id === task.id)?.updating || false;
+	$: if (changing && !focus && !updating) {
+		dialog.open = true;
+		dialog.title = 'Save changes';
+		dialog.message = 'Do you want to save the changes?';
+		dialog.type = 'CONFIRMATION';
+		dialog.onOkClick = () => {
+			update();
+		};
+
+		dialog.onDismissClick = () => {
+			id = task.id;
+			description = task.description;
+			important = task.important;
+			urgent = task.urgent;
+			hours = task.hours;
+
+			onChange(null);
+		};
+	}
+
+	let focus = false;
 	let error = '';
 	let dialog: IDialog = {
+		open: false,
+		trigger: null,
 		title: '',
 		message: '',
 		type: 'INFORMATION',
-		onOkClick: () => {}
+		onOkClick: undefined
 	};
 
 	let { id, description, important, urgent, hours } = task;
 
 	onMount(() => {
-		const inputEl = document.getElementById(`description-input-${task.id}`);
-
-		if (inputEl) {
-			focus && inputEl.focus();
-		}
+		taskEl = document.getElementById(`task-${id}`);
+		dialog.trigger = taskEl;
 	});
 
+	const setFocus = () => {
+		const isAnotherUpdating = states.find((state) => state.updating && state.id !== task.id)
+			? true
+			: false;
+
+		const taskComponents = document.getElementsByClassName(`task-${task.id}-component`);
+
+		let taskElFocused = false;
+
+		for (let taskComponent of taskComponents) {
+			if (document.activeElement?.id === taskComponent.id) {
+				taskElFocused = true;
+			}
+		}
+
+		focus = taskElFocused;
+	};
+
+	const unsetFocus = () => {
+		focus = false;
+	};
+
 	const selectImportance = (value: number) => {
+		if (value !== important) onChange(task.id);
 		important = value as TRelevance;
-		updating = true;
 	};
 
 	const selectUrgency = (value: number) => {
+		if (value !== urgent) onChange(task.id);
 		urgent = value as TRelevance;
-		updating = true;
 	};
 
 	const confirmDelete = () => {
-		dialog.open = true
+		dialog.open = true;
 		dialog.title = 'Confirm deletion';
 		dialog.message = 'Do you wanna delete the task?';
 		dialog.type = 'CONFIRMATION';
-		dialog.onOkClick = () => {onDelete(task)}
+		dialog.onOkClick = () => {
+			onDelete(task);
+		};
 	};
 
-	$: (() => {
-		const inputEl = document.getElementById('description-input')
+	const update = () => {
+		updating = true;
 
-		if (inputEl) {
-			inputEl.focus()
+		if (!description) {
+			error = 'Write the task description!';
+			setFocus();
+			return;
 		}
-	})()
+
+		onUpdate({
+			id,
+			description,
+			important,
+			urgent,
+			hours
+		});
+
+		unsetFocus();
+		onChange(null);
+
+		updating = false;
+	};
 </script>
 
 <Dialog
 	open={dialog.open}
+	trigger={dialog.trigger}
 	modalType={dialog.type}
 	title={dialog.title}
 	message={dialog.message}
 	onOkClick={dialog.onOkClick}
+	onDismissClick={dialog.onDismissClick}
 />
 <form
-	id={String(id)}
-	on:focusout={() => {
-		focus = false;
+	id={`task-${id}`}
+	on:focusin={() => {
+		setFocus();
 	}}
-	class={`task-container ${updating && `border border-gray-200 ${focus ? 'border border-solid ' : 'border border-dashed'}`}`}
+	on:focusout={() => {
+		unsetFocus();
+	}}
+	class={`task-container ${changing && !focus && `border border-dashed border-gray-200`} ${focus && 'border border-solid border-gray-200 focused-component'}`}
 >
 	<div class="flex gap-4">
 		<input
-			id={`description-input-${task.id}`}
+			id={uniqid()}
 			type="text"
+			class={`task-${task.id}-component`}
 			bind:value={description}
 			on:keyup={() => {
-				task.description !== description ? (updating = true) : null;
-				updating=true
-				focus=true
+				if (task.description.trim() !== description.trim()) onChange(task.id);
 				error = '';
 			}}
 			on:focusin={() => {
-				focus = true;
-				updating=true
-				task.description !== description ? (updating = true) : null;
+				setFocus();
 			}}
 		/>
 		<div class="section">
 			<span class="text-center">Important</span>
 			<Relevance
+				{task}
 				size={3}
 				value={important}
 				onSelect={selectImportance}
 				setFocus={() => {
+					if (changing) {
+						focus = false;
+						return;
+					}
 					focus = true;
 				}}
 			/>
@@ -104,10 +175,15 @@
 		<div class="section">
 			<span class="text-center">Urgent</span>
 			<Relevance
+				{task}
 				size={3}
 				value={urgent}
 				onSelect={selectUrgency}
 				setFocus={() => {
+					if (changing) {
+						focus = false;
+						return;
+					}
 					focus = true;
 				}}
 			/>
@@ -115,35 +191,20 @@
 		<div class="section">
 			<span class="text-center">Hours</span>
 			<Hours
+				{task}
 				hours={String(hours)}
 				onChange={(value) => {
-					console.log(hours, value);
+					if (hours !== value) {
+						onChange(task.id);
+						focus = true;
+					}
+
 					hours = value;
-					updating = true
-					focus = true
 				}}
 			/>
 		</div>
-		<UpdateButton
-			{task}
-			onUpdate={() => {
-				if (!description) {
-					error = 'Write the task description';
-					focus = true
-					return
-				}
-
-				updating = false;
-				onUpdate({
-					id,
-					description,
-					important,
-					urgent,
-					hours
-				});
-			}}
-		/>
-		<DeleteButton {confirmDelete} />
+		<UpdateButton {task} onUpdate={update} />
+		<DeleteButton {task} {confirmDelete} />
 	</div>
 	{#if error}
 		<strong class="ml-3 p-0 text-sm text-red-300">{error}</strong>
@@ -152,7 +213,7 @@
 
 <style lang="postcss">
 	.task-container {
-		@apply w-full text-sm p-4;
+		@apply w-full p-4 text-sm;
 	}
 
 	.section {

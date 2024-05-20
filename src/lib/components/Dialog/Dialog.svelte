@@ -3,13 +3,16 @@
 	import { CloseCircleOutline, QuestionCircleOutline, ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
 	export let open: boolean;
+	export let trigger: HTMLElement | null = null
 	export let title: string = '';
 	export let message: string = '';
-	export let args: unknown[] | undefined = undefined;
 	export let modalType: TModalType = 'INFORMATION';
 	export let okButtonMessage = 'OK';
 	export let dismissButtonMessage = 'DISMISS';
-	export let onOkClick: ((args: unknown[] | undefined) => unknown | void) | undefined = undefined;
+	export let onOkClick: (() => void) | undefined = undefined;
+	export let onDismissClick: (() => void) | undefined = undefined;
+
+	$: trigger?.focus()
 
 	const hide = () => {
 		open = false;
@@ -21,20 +24,20 @@
 		class="background"
 	>
 		<div class="dialog">
-			<div class="flex w-full justify-end">
+			<div class="flex w-full justify-between">
+				<h2 class="text-xl text-center">{title}</h2>
 				<button on:click={hide}>
 					<CloseCircleOutline />
 				</button>
 			</div>
-			<h2 class="text-xl text-center">{title}</h2>
-			<div class="flex gap-2 items-center">
+			<div class="flex gap-3 items-start my-4">
 				{#if modalType === 'CONFIRMATION'}
 					<QuestionCircleOutline size='xl' />
 				{/if}
 				{#if modalType === 'INFORMATION'}
 					<ExclamationCircleOutline size='xl' />
 				{/if}
-				<div class="mt-2 mb-4 p-2 w-full h-[4em] overflow-y-auto">
+				<div class="w-full h-[2em] overflow-y-auto mt-1">
 					<p>{message}</p>
 				</div>
 			</div>
@@ -42,9 +45,8 @@
 				{#if modalType === 'CONFIRMATION' || 'INFORMATION'}
 				<button
 					class="transparent-button w-16"
-					on:click={(e) => {
-						args?.push(e);
-						onOkClick && onOkClick(args);
+					on:click={() => {
+						onOkClick && onOkClick();
 						hide();
 					}}
 				>
@@ -52,7 +54,10 @@
 				</button>
 			{/if}
 			{#if modalType === 'CONFIRMATION'}
-				<button class="transparent-button" on:click={hide}>
+				<button class="transparent-button" on:click={() => {
+					hide()
+					onDismissClick && onDismissClick()
+				}}>
 					{dismissButtonMessage}
 				</button>
 			{/if}
@@ -68,7 +73,7 @@
 	}
 
 	.dialog {
-		@apply fixed top-[30vh] md:ml-[35vw] md:w-[30vw] h-[35vh] rounded-lg border text-white p-4;
+		@apply fixed top-[35vh] md:ml-[35vw] md:w-[30vw] h-[30vh] rounded-lg border text-white p-4;
 		background-color: rgba(0, 0, 0, 0.75);
 	}
 </style>

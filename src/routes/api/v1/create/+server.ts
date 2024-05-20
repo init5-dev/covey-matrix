@@ -30,11 +30,23 @@ export const GET = async () => {
       const error = err as Prisma.PrismaClientKnownRequestError
 
       if (error.code === 'P2002') {
+        try {
+          await prisma.$disconnect()
+        } catch (error) {
+          console.error((error as Error).message)
+        }
+        
         return new Response(JSON.stringify({
           success: false,
           error: 'The task already exists'
         }))
       }
+    }
+
+    try {
+      await prisma.$disconnect()
+    } catch (error) {
+      console.error((error as Error).message)
     }
 
     const error = err as Error

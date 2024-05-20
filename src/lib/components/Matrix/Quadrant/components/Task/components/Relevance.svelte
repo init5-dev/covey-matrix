@@ -1,4 +1,8 @@
 <script lang="ts">
+	import type { ITask } from "$lib/types";
+	import { uniqid } from "$lib/utils/uniqid";
+
+	export let task: ITask
 	export let size: number;
 	export let value: number;
 	export let onSelect: (value: number) => void;
@@ -17,7 +21,7 @@
 	}
 </script>
 
-<div class="flex items-center justify-center">
+<div id={uniqid()} class={`flex items-center justify-center task-${task.id}-component`}>
 	{#each stars as star, index}
 		<button
 			on:click={(e) => {

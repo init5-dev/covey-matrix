@@ -48,6 +48,8 @@ export const PUT = async ({request}) => {
       task: response
     }))
   } catch (err) {
+    await prisma.$disconnect()
+    
     const error = err as Error
 
     return new Response(JSON.stringify({
