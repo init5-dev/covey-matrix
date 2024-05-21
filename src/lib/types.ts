@@ -7,5 +7,4 @@ export interface ITask {
   description: string
   urgent: number
   important: number
-  hours: number
 }

@@ -3,12 +3,11 @@ import type { ITask } from "$lib/types.js"
 
 const isTask = (obj: unknown) => {
   try {
-    const {id, description, urgent, important, hours} = obj as ITask
+    const {id, description, urgent, important } = obj as ITask
     if (typeof id !== 'number') return false
     if (typeof description !== 'string') return false
     if (typeof urgent !== 'number') return false
     if (typeof important !== 'number') return false
-    if (typeof hours !== 'number') return false
 
     const relevanceValues = [0, 1, 2, 3]
 

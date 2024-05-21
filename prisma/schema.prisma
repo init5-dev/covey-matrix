@@ -18,5 +18,4 @@ model Task {
   description String @unique
   urgent Int
   important Int
-  hours Int
 }

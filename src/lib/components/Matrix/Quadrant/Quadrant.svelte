@@ -15,7 +15,7 @@
 	export let setState: (id: number, changing: boolean, updating: boolean, focus: boolean) => void
 
 	const calcPriority = (task: ITask) => {
-		const {important, urgent, hours} = task
+		const {important, urgent} = task
 
 		return (important * urgent)
 	}

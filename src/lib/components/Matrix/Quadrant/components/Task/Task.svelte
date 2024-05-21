@@ -3,11 +3,9 @@
 	import type { ITask, TRelevance } from '$lib/types';
 	import Relevance from './components/Relevance.svelte';
 	import UpdateButton from './components/UpdateButton.svelte';
-	import Hours from './components/Hours.svelte';
 	import Dialog from '$lib/components/Dialog/Dialog.svelte';
 	import type { IDialog, IState } from '$lib/components/Dialog/types';
 	import { uniqid } from '$lib/utils/uniqid';
-	import { onMount } from "svelte";
 
 	export let task: ITask;
 	export let states: IState[];
@@ -15,7 +13,7 @@
 	export let onDelete: (task: ITask) => void;
 	export let setState: (id: number, changing: boolean, updating: boolean, focus: boolean) => void;
 
-	let { id, description, important, urgent, hours } = task;
+	let { id, description, important, urgent } = task;
 
 	let changing = false;
 	let updating = false;
@@ -62,7 +60,6 @@
 				description = task.description;
 				important = task.important;
 				urgent = task.urgent;
-				hours = task.hours;
 
 				// onChange(null);
 				setChanging(false);
@@ -150,8 +147,7 @@
 			id,
 			description,
 			important,
-			urgent,
-			hours
+			urgent
 		});
 
 		setUpdating(false);
@@ -239,20 +235,6 @@
 					}}
 				/>
 			</div>
-			<!-- <div class="section">
-				<span class="text-center">Hours</span>
-				<Hours
-					{task}
-					hours={String(hours)}
-					onChange={(value) => {
-						setFocus(true);
-						hours = value;
-					}}
-					setFocus={() => {
-						setFocus(true);
-					}}
-				/>
-			</div> -->
 			<UpdateButton
 				{task}
 				onUpdate={() => {
