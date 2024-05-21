@@ -10,10 +10,10 @@
 
 <button
 	id={uniqid()}
-	on:click={() => {
+	on:mousedown={() => {
 		confirmDelete();
 	}}
-	class={`transparent-button task-${task.id}-component`}
+	class={`z-10 transparent-button task-${task.id}-component`}
 >
 	<TrashBinOutline />
 </button>

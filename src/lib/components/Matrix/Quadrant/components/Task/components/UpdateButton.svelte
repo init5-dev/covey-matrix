@@ -10,11 +10,11 @@
 
 <button
 	id={uniqid()}
-	on:click={(e) => {
+	on:mousedown={(e) => {
 		e.preventDefault;
 		onUpdate(task);
 	}}
-	class={`transparent-button task-${task.id}-component`}
+	class={`z-10 transparent-button task-${task.id}-component`}
 >
 	<DownloadOutline />
 </button>

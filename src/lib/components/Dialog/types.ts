@@ -12,7 +12,9 @@ export interface IDialog {
 
 export interface IState {
   id: number
+  changing: boolean
   updating: boolean
+  focus: boolean
 }
 
 export interface IMatrixStates {

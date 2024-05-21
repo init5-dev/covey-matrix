@@ -9,19 +9,6 @@
 	let error: string;
 	let message: string;
 	// let updatedTaskId: string | null;
-	let q1: ITask[] = [];
-	let q2: ITask[] = [];
-	let q3: ITask[] = [];
-	let q4: ITask[] = [];
-
-	$: tasks ? fillQuadrants() : null;
-
-	const fillQuadrants = () => {
-		q1 = tasks?.length ? tasks.filter((task) => task.important && task.urgent) : [];
-		q2 = tasks?.length ? tasks?.filter((task) => task.important && !task.urgent) : [];
-		q3 = tasks?.length ? tasks?.filter((task) => !task.important && task.urgent) : [];
-		q4 = tasks?.length ? tasks?.filter((task) => !task.important && !task.urgent) : [];
-	};
 
 	onMount(async () => {
 		updated = false;
@@ -128,8 +115,8 @@
 	};
 
 	const onDelete = async (task: ITask) => {
-		const tasksSave = JSON.parse(JSON.stringify(tasks))
-		tasks = tasks?.filter(t => t.id !== task.id)
+		const tasksSave = JSON.parse(JSON.stringify(tasks));
+		tasks = tasks?.filter((t) => t.id !== task.id);
 
 		try {
 			const response = await fetch('/api/v1/delete', {
@@ -145,21 +132,21 @@
 			if (response.ok) {
 				const data = await response.json();
 
-				if (data.success) {	
-					tasks = tasks
+				if (data.success) {
+					tasks = tasks;
 					updated = true;
 					deleted = true;
 				} else {
 					error = data.error;
-					tasks = tasksSave
+					tasks = tasksSave;
 				}
 			} else {
 				error = response.statusText;
-				tasks = tasksSave
+				tasks = tasksSave;
 			}
 		} catch (err) {
 			error = (err as Error).message;
-			tasks = tasksSave
+			tasks = tasksSave;
 		}
 	};
 </script>
@@ -175,5 +162,7 @@
 </div>
 
 {#key tasks}
-		<Matrix {q1} {q2} {q3} {q4} {onCreate} {onUpdate} {onDelete} />
+	{#if tasks}
+		<Matrix {tasks} {onCreate} {onUpdate} {onDelete} />
+	{/if}
 {/key}

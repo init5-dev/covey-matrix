@@ -21,10 +21,10 @@
 	}
 </script>
 
-<div id={uniqid()} class={`flex items-center justify-center task-${task.id}-component`}>
+<div on:focusin={setFocus} id={`relevance-${uniqid()}`} class={`flex items-center justify-center task-${task.id}-component`}>
 	{#each stars as star, index}
 		<button
-			on:click={(e) => {
+			on:mousedown={(e) => {
 				e.preventDefault()
 				stars.forEach(star => star.active = false)
 

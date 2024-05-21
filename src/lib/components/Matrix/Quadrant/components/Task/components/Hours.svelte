@@ -6,6 +6,7 @@
 	export let hours: string = '0';
 	export let max: number = 2920;
   export let onChange: (value: number) => void
+	export let setFocus: () => void
 
 	const startingZeros = () => {
 		let c = 0;
@@ -28,13 +29,15 @@
 
 
 	const increment = () => {
+		setFocus()
 		if (value < max) hours = String(value + 1);
-		onChange(Number(hours))
+		onChange(Number(hours))	
 	};
 
 	const decrement = () => {
 		if (value > 0) hours = String(value - 1);
 		onChange(Number(hours))
+		setFocus()
 	};
 
 	const validateKey = (e: KeyboardEvent) => {
@@ -44,11 +47,13 @@
 	};
 </script>
 
-<div id={uniqid()} class={`hours-container task-${task.id}-component`}>
-	<input type="text" bind:value={hours} on:keypress={validateKey} on:focus={()=>{onChange(Number(hours))}}/>
-	<div class="flex gap-1">
-		<button on:click={increment} disabled={value === max}>+</button>
-		<button on:click={decrement} disabled={value === 0}>-</button>
+<div on:focusin={setFocus} id={uniqid()} class={`hours-container task-${task.id}-component`}>
+	<input type="text" bind:value={hours} on:keydown={(e)=>{
+		e.preventDefault()
+	}}/>
+	<div on:focusin={setFocus} class="flex gap-1">
+		<button on:mousedown={increment} disabled={value === max}>+</button>
+		<button on:mousedown={decrement} disabled={value === 0}>-</button>
 	</div>
 </div>
 

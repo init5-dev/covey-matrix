@@ -21,7 +21,7 @@
 
 {#if open}
 	<div
-		class="background"
+		class="background z-50"
 	>
 		<div class="dialog">
 			<div class="flex w-full justify-between">

@@ -12,16 +12,14 @@
 	export let color: TColor = 'none';
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
+	export let setState: (id: number, changing: boolean, updating: boolean, focus: boolean) => void
 
-	const onChange = (id: number | null) => {
-		if (id) {
-			states = states.map(state => state.id === id ? {...state, updating: true}: {...state})
-		} else {
-			states = states.map(state => ({...state, updating: false}))
-		}
-	};
+	const calcPriority = (task: ITask) => {
+		const {important, urgent, hours} = task
 
-	tasks?.sort((a: ITask, b: ITask) => a.important * a.urgent - b.important * b.urgent);
+		return (important * urgent)
+	}
+	tasks?.sort((a: ITask, b: ITask) => calcPriority(b) - calcPriority(a));
 </script>
 
 <div class={`flex w-full gap-4 border border-gray-200 p-4 ${color && quadrantColor(color)}`}>
@@ -38,7 +36,7 @@
 			{#key tasks}
 				{#if tasks.length}
 					{#each tasks as task}
-						<Task {task} {onChange} {onUpdate} {onDelete} {states} />
+						<Task {task} {states} {onUpdate} {onDelete} {setState} />
 					{/each}
 				{:else}
 					<div>
@@ -53,6 +51,7 @@
 <style>
 	.vtext {
 		writing-mode: sideways-lr;
+		-ms-writing-mode: sideways-lr;
 		text-orientation: mixed;
 	}
 </style>

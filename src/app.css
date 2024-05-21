@@ -38,3 +38,7 @@ body {
 .transparent-button:active {
   @apply border-4
 }
+
+.inactive-transparent-button {
+  @apply pointer-events-none text-gray-500 bg-transparent border border-solid border-gray-500 ring-0 p-2 flex items-center justify-center rounded
+}
