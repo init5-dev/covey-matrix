@@ -1,29 +1,9 @@
 import prisma from "$lib/prisma"
-import type { ITask } from "$lib/types.js"
-
-const isTask = (obj: unknown) => {
-  try {
-    const {id, description, urgent, important } = obj as ITask
-    if (typeof id !== 'number') return false
-    if (typeof description !== 'string') return false
-    if (typeof urgent !== 'number') return false
-    if (typeof important !== 'number') return false
-
-    const relevanceValues = [0, 1, 2, 3]
-
-    if (!relevanceValues.includes(urgent)) return false
-    if (!relevanceValues.includes(important)) return false
-  } catch (err) {
-    return false
-  }
-
-  return true
-}
 
 export const PUT = async ({request}) => {
   const data = await request.json()
 
-  if (!data || !isTask(data)) {
+  if (!data) {
     return new Response(JSON.stringify({
       success: false,
       error: 'Bad Request'

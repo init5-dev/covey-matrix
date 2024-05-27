@@ -4,22 +4,24 @@
 	import CreateButton from './components/CreateButton.svelte';
 	import quadrantColor from '../colors';
 	import type { IState } from "$lib/components/Dialog/types";
+	import { calculateImportance, calculateUrgency } from "$lib/utils/calculations";
 
-	export let states: IState[]
 	export let htag: string = '';
 	export let vtag: string = '';
 	export let tasks: ITask[];
 	export let color: TColor = 'none';
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
-	export let setState: (id: number, changing: boolean, updating: boolean, focus: boolean) => void
 
 	const calcPriority = (task: ITask) => {
-		const {important, urgent} = task
+		const importance = calculateImportance(task)
+		const urgency = calculateUrgency(task)
 
-		return (important * urgent)
+		return (importance * (1 + urgency))
 	}
-	tasks?.sort((a: ITask, b: ITask) => calcPriority(b) - calcPriority(a));
+
+	
+	 tasks?.sort((a: ITask, b: ITask) => calcPriority(a) - calcPriority(b));
 </script>
 
 <div class={`flex w-full gap-4 border border-gray-200 p-4 ${color && quadrantColor(color)}`}>
@@ -36,7 +38,7 @@
 			{#key tasks}
 				{#if tasks.length}
 					{#each tasks as task}
-						<Task {task} {states} {onUpdate} {onDelete} {setState} />
+						<Task {task} {onUpdate} {onDelete} />
 					{/each}
 				{:else}
 					<div>

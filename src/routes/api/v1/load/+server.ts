@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client"
 import prisma from "$lib/prisma"
 
 export const GET = async () => {
@@ -6,7 +5,7 @@ export const GET = async () => {
     await prisma.$connect()
 
     const tasks = await prisma.task.findMany({})
-
+ 
     await prisma.$disconnect()
 
     return new Response(JSON.stringify({

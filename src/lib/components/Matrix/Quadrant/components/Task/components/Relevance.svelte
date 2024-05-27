@@ -6,7 +6,6 @@
 	export let size: number;
 	export let value: number;
 	export let onSelect: (value: number) => void;
-	export let setFocus: () => void;
 
 	interface IStar {
 		active: boolean;
@@ -21,7 +20,7 @@
 	}
 </script>
 
-<div on:focusin={setFocus} id={`relevance-${uniqid()}`} class={`flex items-center justify-center task-${task.id}-component`}>
+<div id={`relevance-${uniqid()}`} class={`flex items-center justify-center task-${task.id}-component`}>
 	{#each stars as star, index}
 		<button
 			on:mousedown={(e) => {
@@ -36,7 +35,6 @@
 
 				value = stars.filter((star) => star.active).length;
 
-				setFocus()
 				onSelect(value);
 			}}
 		>

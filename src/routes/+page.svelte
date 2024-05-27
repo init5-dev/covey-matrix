@@ -8,14 +8,12 @@
 	let deleted: boolean;
 	let error: string;
 	let message: string;
-	// let updatedTaskId: string | null;
 
 	onMount(async () => {
 		updated = false;
 		deleted = false;
 		error = '';
 		message = '';
-		// updatedTaskId = null;
 
 		await load();
 	});
@@ -23,8 +21,6 @@
 	$: updated &&
 		(async () => {
 			if (updated) {
-				await load();
-
 				error = '';
 				message = '';
 				updated = false;
@@ -74,7 +70,9 @@
 				const data = await response.json();
 
 				if (data.success) {
-					// updatedTaskId = String(data.task.id);
+					tasks?.push(data.task);
+					console.log(JSON.stringify(tasks?.map(t => t.description), null, 2))
+					tasks = tasks
 					updated = true;
 				} else {
 					error = data.error;
@@ -101,7 +99,12 @@
 				const data = await response.json();
 
 				if (data.success) {
-					// updatedTaskId = String(data.task.id);
+					const taskDeleted = tasks?.find(t => t.id === task.id)
+					if (taskDeleted) {
+						tasks?.splice(tasks.indexOf(taskDeleted), 1)
+					}
+					tasks?.push(data.task)
+					tasks = tasks
 					updated = true;
 				} else {
 					error = data.error;
@@ -133,7 +136,10 @@
 				const data = await response.json();
 
 				if (data.success) {
-					tasks = tasks;
+					const taskDeleted = tasks?.find(t => t.id === task.id)
+					if (taskDeleted) {
+						tasks?.splice(tasks.indexOf(taskDeleted), 1)
+					}
 					updated = true;
 					deleted = true;
 				} else {

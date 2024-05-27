@@ -10,8 +10,12 @@ export const GET = async () => {
 
     const data = {
       description: `Task #${index}`,
-      important: 1,
-      urgent: 1,
+      financial_importance: 1,
+      spiritual_importance: 1,
+      social_emotional_importance: 1,
+      physical_importance: 1,
+      deadline: 1,
+      status: 'pending'
     }
 
     const task = await prisma.task.create({
