@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ITask } from '$lib/types';
-	import { calculateImportance, calculateUrgency } from '$lib/utils/calculations';
+	import { calculateRelevance, calculateUrgency } from '$lib/utils/calculations';
 	import type { IMatrixStates, IState } from '../Dialog/types';
 	import Quadrant from './Quadrant/Quadrant.svelte';
 	import CreateButton from './Quadrant/components/CreateButton.svelte';
@@ -26,7 +26,7 @@
 		
 		q1 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
@@ -36,7 +36,7 @@
 			: [];
 		q2 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
@@ -46,7 +46,7 @@
 			: [];
 		q3 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
@@ -56,7 +56,7 @@
 			: [];
 		q4 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);

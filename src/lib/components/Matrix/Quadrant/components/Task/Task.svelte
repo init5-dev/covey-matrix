@@ -9,6 +9,7 @@
 	import Dialog from '$lib/components/Dialog/Dialog.svelte';
 	import Deadline from "./components/Deadline.svelte";
 
+	export let ordinal: number
 	export let task: ITask;
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
@@ -103,6 +104,9 @@
 		/>
 	</div>
 	<div class="flex justify-end gap-4">
+		<div class="section w-10 flex items-center justify-start pr-6">
+			<p class="text-3xl text-left mt-2">{ordinal}</p>
+		</div>
 		<div class="section">
 			<span class="text-center">Financial</span>
 			<Relevance
@@ -139,7 +143,8 @@
 				onSelect={selectPhysicalImportance}
 			/>
 		</div>
-		<div class="flex gap-1 items-center">
+		<div class="section">
+			<span class="text-center">Deadline</span>
 			<Deadline selected={task.deadline} onSelect={(value) => {
 				task.deadline = value
 				changing = true

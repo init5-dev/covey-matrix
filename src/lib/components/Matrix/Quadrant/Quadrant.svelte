@@ -4,7 +4,7 @@
 	import CreateButton from './components/CreateButton.svelte';
 	import quadrantColor from '../colors';
 	import type { IState } from "$lib/components/Dialog/types";
-	import { calculateImportance, calculateUrgency } from "$lib/utils/calculations";
+	import { calculateRelevance, calculateUrgency } from "$lib/utils/calculations";
 
 	export let htag: string = '';
 	export let vtag: string = '';
@@ -14,14 +14,14 @@
 	export let onDelete: (task: ITask) => void;
 
 	const calcPriority = (task: ITask) => {
-		const importance = calculateImportance(task)
+		const importance = calculateRelevance(task)
 		const urgency = calculateUrgency(task)
 
-		return (importance * (1 + urgency))
+		return importance * (1 + urgency)
 	}
 
 	
-	 tasks?.sort((a: ITask, b: ITask) => calcPriority(a) - calcPriority(b));
+	 tasks?.sort((a: ITask, b: ITask) => calcPriority(b) - calcPriority(a));
 </script>
 
 <div class={`flex w-full gap-4 border border-gray-200 p-4 ${color && quadrantColor(color)}`}>
@@ -37,8 +37,8 @@
 		>
 			{#key tasks}
 				{#if tasks.length}
-					{#each tasks as task}
-						<Task {task} {onUpdate} {onDelete} />
+					{#each tasks as task, i}
+						<Task ordinal={i+1} {task} {onUpdate} {onDelete} />
 					{/each}
 				{:else}
 					<div>
