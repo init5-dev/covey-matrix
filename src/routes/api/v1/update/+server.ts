@@ -31,9 +31,11 @@ export const PUT = async ({request}) => {
     
     const error = err as Error
 
+    console.error(error.message)
+
     return new Response(JSON.stringify({
       success: false,
-      error: error.message
+      error: 'Task update failed!'
     }))
   }
 }

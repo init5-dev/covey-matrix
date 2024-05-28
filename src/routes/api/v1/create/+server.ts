@@ -54,9 +54,11 @@ export const GET = async () => {
 
     const error = err as Error
 
+    console.error(error.message)
+
     return new Response(JSON.stringify({
       success: false,
-      error: error.message
+      error: 'Task creation failed!'
     }))
   }
 }
