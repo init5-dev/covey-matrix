@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { PlusOutline } from 'flowbite-svelte-icons';
 
-	export let editMode: boolean
 	export let onCreate: () => void;
 </script>
 
@@ -10,7 +9,7 @@
 	on:click={() => {
 		onCreate();
 	}}
-	class={`${editMode ? 'inactive-transparent-button' : 'transparent-button'}`}
+	class={`transparent-button w-40 h-10`}
 >
 	<PlusOutline />
 	Create task

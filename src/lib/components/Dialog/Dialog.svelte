@@ -3,7 +3,6 @@
 	import { CloseCircleOutline, QuestionCircleOutline, ExclamationCircleOutline } from 'flowbite-svelte-icons';
 
 	export let open: boolean;
-	export let trigger: HTMLElement | null = null
 	export let title: string = '';
 	export let message: string = '';
 	export let modalType: TModalType = 'INFORMATION';
@@ -12,8 +11,6 @@
 	export let onOkClick: (() => void) | undefined = undefined;
 	export let onDismissClick: (() => void) | undefined = undefined;
 
-	$: trigger?.focus()
-
 	const hide = () => {
 		open = false;
 	};
@@ -21,7 +18,7 @@
 
 {#if open}
 	<div
-		class="background z-50"
+		class="background"
 	>
 		<div class="dialog">
 			<div class="flex w-full justify-between">
@@ -55,8 +52,8 @@
 			{/if}
 			{#if modalType === 'CONFIRMATION'}
 				<button class="transparent-button" on:click={() => {
-					hide()
 					onDismissClick && onDismissClick()
+					hide()
 				}}>
 					{dismissButtonMessage}
 				</button>
@@ -68,7 +65,7 @@
 
 <style lang="postcss">
 	.background {
-	  @apply fixed top-0 bottom-0 left-0 right-0 z-50 p-8;
+	  @apply fixed top-0 bottom-0 left-0 right-0 p-8;
 		background-color: rgba(0, 0, 0, 0.5);
 	}
 

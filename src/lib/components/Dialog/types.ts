@@ -2,11 +2,10 @@ export type TModalType = 'CONFIRMATION' | 'INFORMATION'
 
 export interface IDialog {
   open: boolean
-  trigger: HTMLElement | null
   title: string
   message: string
   type: TModalType
-  onOkClick: (() => unknown | void) | undefined
+  onOkClick?: (() => unknown | void) | undefined
   onDismissClick?: (() => unknown | void) | undefined
 };
 

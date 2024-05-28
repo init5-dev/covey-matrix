@@ -15,7 +15,11 @@ datasource db {
 
 model Task {
   id Int @id @default(autoincrement())
-  description String @unique
-  urgent Int
-  important Int
+  description String
+  deadline Int
+  financial_importance Int
+  spiritual_importance Int
+  social_emotional_importance Int
+  physical_importance Int
+  status String
 }

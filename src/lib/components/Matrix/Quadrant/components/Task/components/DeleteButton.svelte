@@ -13,7 +13,7 @@
 	on:mousedown={() => {
 		confirmDelete();
 	}}
-	class={`z-10 transparent-button task-${task.id}-component`}
+	class={`transparent-button task-${task.id}-component`}
 >
 	<TrashBinOutline />
 </button>

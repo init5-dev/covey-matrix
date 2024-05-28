@@ -11,6 +11,10 @@ body {
   @apply bg-black
 }
 
+select.custom-select, select::-ms-expand {
+  @apply text-sm bg-transparent border border-solid border-gray-300 ring-0 ring-white p-2 flex items-center justify-center rounded;
+}
+
 .red-deck {
   background: rgba(255, 0, 0, 0.2);
 }
@@ -28,15 +32,11 @@ body {
 }
 
 .transparent-button {
-  @apply text-white bg-transparent border border-solid border-gray-300 ring-0 p-2 flex items-center justify-center rounded
-}
-
-.transparent-button:hover {
-  @apply border-2
+  @apply text-white bg-transparent border border-solid border-gray-300 ring-0 ring-white p-2 flex items-center justify-center rounded
 }
 
 .transparent-button:active {
-  @apply border-4
+  @apply ring-1
 }
 
 .inactive-transparent-button {
