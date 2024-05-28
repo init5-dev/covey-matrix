@@ -11,8 +11,8 @@ body {
   @apply bg-black
 }
 
-select, select option {
-  @apply text-white text-sm bg-transparent border border-solid border-gray-300 ring-0 ring-white p-2 flex items-center justify-center rounded;
+select.custom-select, select::-ms-expand {
+  @apply text-sm bg-transparent border border-solid border-gray-300 ring-0 ring-white p-2 flex items-center justify-center rounded;
 }
 
 .red-deck {

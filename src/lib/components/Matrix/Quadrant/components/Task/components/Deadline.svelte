@@ -1,22 +1,45 @@
 <script lang="ts">
-	import { type IDeadline, Deadlines } from '$lib/types';
+	import { Deadlines as deadlines } from '$lib/types';
+	import { AngleLeftOutline, AngleRightOutline } from 'flowbite-svelte-icons'
 
-	export let selected: number 
-	export let onSelect: (value: number) => void
+	export let selected: number;
+	export let onSelect: (value: number) => void;
 
-	let value: number = selected.value
+	let open = false
 
-	$:console.log(value)
+	$: selectedName = deadlines.find(d => d.value === selected)?.name
+
+	const next = () => {
+		let i = deadlines.indexOf(deadlines.find(d => d.value === selected) || deadlines[0])
+
+		if (i <= deadlines.length - 2) {
+			selected = deadlines[i + 1].value
+		} else {
+			selected = deadlines[0].value
+		}
+
+		onSelect(selected)
+	}
+
+	const prev = () => {
+		let i = deadlines.indexOf(deadlines.find(d => d.value === selected) || deadlines[0])
+
+		if (i >= 1) {
+			selected = deadlines[i - 1].value
+		} else {
+			selected = deadlines[deadlines.length-1].value
+		}
+
+		onSelect(selected)
+	}
 </script>
 
-
 <div class="flex gap-1">
-	<select bind:value on:change={()=>{
-		console.log('VALUE')
-		onSelect(value)
-	}}>
-		{#each Deadlines as deadline, i}
-			<option value={deadline.value} selected={value === selected.value}>{deadline.name}</option>
-		{/each}
-	</select>
+	<button on:click={prev}>
+		<AngleLeftOutline />
+	</button>
+	<p class="w-24">{selectedName}</p>
+	<button on:click={next}>
+		<AngleRightOutline />
+	</button>
 </div>

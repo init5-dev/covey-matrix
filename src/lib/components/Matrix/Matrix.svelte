@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { ITask } from '$lib/types';
-	import { calculateImportance, calculateUrgency } from '$lib/utils/calculations';
+	import { calculateRelevance, calculateUrgency } from '$lib/utils/calculations';
+	import { Heading } from 'flowbite-svelte';
 	import type { IMatrixStates, IState } from '../Dialog/types';
 	import Quadrant from './Quadrant/Quadrant.svelte';
 	import CreateButton from './Quadrant/components/CreateButton.svelte';
@@ -19,49 +20,48 @@
 
 	$: tasks && updateQuadrants();
 
-
 	const fillQuadrants = () => {
-		let important
+		let important;
 		let urgent;
-		
+
 		q1 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
 
-					return important && urgent
+					return important && urgent;
 				})
 			: [];
 		q2 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
 
-					return important && !urgent
+					return important && !urgent;
 				})
 			: [];
 		q3 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
 
-					return !important && urgent
+					return !important && urgent;
 				})
 			: [];
 		q4 = tasks?.length
 			? tasks.filter((task) => {
-					important = calculateImportance(task);
+					important = calculateRelevance(task);
 					urgent = calculateUrgency(task);
 
 					console.log(`Task #${task.id}: I:${important}, U:${urgent} `);
 
-					return !important && !urgent
+					return !important && !urgent;
 				})
 			: [];
 	};
@@ -72,9 +72,15 @@
 	};
 </script>
 
-<div class="m-4">
-	<div class="mb-4 flex">
-		<CreateButton {onCreate} />
+<div class="mx-2 my-0">
+	<div class="mb-4 flex justify-between items-end">
+		<div>
+			<Heading tag="h1"><span class="text-white text-xl">Multidimensional Covey's Matrix</span></Heading>
+			<p class="text-white">Init5dev 🄯 2024</p>
+		</div>
+		<div class="mb-2">
+			<CreateButton {onCreate} />
+		</div>
 	</div>
 	<div class="grid grid-cols-2 gap-2 text-white">
 		<Quadrant color="important-urgent" htag="Do not delay!" tasks={q1} {onUpdate} {onDelete} />

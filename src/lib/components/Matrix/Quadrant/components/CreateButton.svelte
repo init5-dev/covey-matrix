@@ -9,7 +9,7 @@
 	on:click={() => {
 		onCreate();
 	}}
-	class={`transparent-button`}
+	class={`transparent-button w-40 h-10`}
 >
 	<PlusOutline />
 	Create task

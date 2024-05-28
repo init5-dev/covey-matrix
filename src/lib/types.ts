@@ -34,11 +34,15 @@ export const Deadlines: IDeadline[] = [
     value: 7
   },
   {
+    name: 'this fortnight',
+    value: 15
+  },
+  {
     name: 'this month',
     value: 30
   },
   {
-    name: 'this trimester',
+    name: 'this quarter',
     value: 90
   },
   {
@@ -49,4 +53,8 @@ export const Deadlines: IDeadline[] = [
     name: 'this year',
     value: 365
   },
+  {
+    name: 'indefinite',
+    value: -1
+  }
 ]

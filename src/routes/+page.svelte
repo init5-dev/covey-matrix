@@ -71,8 +71,14 @@
 
 				if (data.success) {
 					tasks?.push(data.task);
-					console.log(JSON.stringify(tasks?.map(t => t.description), null, 2))
-					tasks = tasks
+					console.log(
+						JSON.stringify(
+							tasks?.map((t) => t.description),
+							null,
+							2
+						)
+					);
+					tasks = tasks;
 					updated = true;
 				} else {
 					error = data.error;
@@ -99,12 +105,12 @@
 				const data = await response.json();
 
 				if (data.success) {
-					const taskDeleted = tasks?.find(t => t.id === task.id)
+					const taskDeleted = tasks?.find((t) => t.id === task.id);
 					if (taskDeleted) {
-						tasks?.splice(tasks.indexOf(taskDeleted), 1)
+						tasks?.splice(tasks.indexOf(taskDeleted), 1);
 					}
-					tasks?.push(data.task)
-					tasks = tasks
+					tasks?.push(data.task);
+					tasks = tasks;
 					updated = true;
 				} else {
 					error = data.error;
@@ -136,9 +142,9 @@
 				const data = await response.json();
 
 				if (data.success) {
-					const taskDeleted = tasks?.find(t => t.id === task.id)
+					const taskDeleted = tasks?.find((t) => t.id === task.id);
 					if (taskDeleted) {
-						tasks?.splice(tasks.indexOf(taskDeleted), 1)
+						tasks?.splice(tasks.indexOf(taskDeleted), 1);
 					}
 					updated = true;
 					deleted = true;
@@ -157,15 +163,17 @@
 	};
 </script>
 
-<div class="h-4">
-	{#if error}
+{#if error}
+	<div class="h-4">
 		<strong class="message-tag m-4 w-full text-center text-red-300">{error}</strong>
-	{/if}
+	</div>
+{/if}
 
-	{#if message}
+{#if message}
+	<div class="h-4">
 		<strong class="message-tag m-4 w-full text-center text-lime-300">{message}</strong>
-	{/if}
-</div>
+	</div>
+{/if}
 
 {#key tasks}
 	{#if tasks}
