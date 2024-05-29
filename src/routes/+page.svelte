@@ -9,6 +9,8 @@
 	let error: string;
 	let message: string;
 
+	let newTaskId = -1
+
 	onMount(async () => {
 		updated = false;
 		deleted = false;
@@ -80,6 +82,7 @@
 					);
 					tasks = tasks;
 					updated = true;
+					newTaskId = data.task.id
 				} else {
 					error = data.error;
 				}
@@ -112,6 +115,7 @@
 					tasks?.push(data.task);
 					tasks = tasks;
 					updated = true;
+					newTaskId = -1
 				} else {
 					error = data.error;
 				}
@@ -142,6 +146,7 @@
 				const data = await response.json();
 
 				if (data.success) {
+					newTaskId = -1
 					const taskDeleted = tasks?.find((t) => t.id === task.id);
 					if (taskDeleted) {
 						tasks?.splice(tasks.indexOf(taskDeleted), 1);
@@ -177,6 +182,6 @@
 
 {#key tasks}
 	{#if tasks}
-		<Matrix {tasks} {onCreate} {onUpdate} {onDelete} />
+		<Matrix {tasks} {newTaskId} {onCreate} {onUpdate} {onDelete} />
 	{/if}
 {/key}

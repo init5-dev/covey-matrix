@@ -11,13 +11,15 @@
 
 	export let ordinal: number
 	export let task: ITask;
+	export let isNew = false
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
+
 
 	let unchangedTask = { ...task };
 	let changing = false;
 
-	$: console.log(JSON.stringify(task, null, 2));
+	$: if (changing) isNew = false;
 
 	let error = '';
 	let dialog: IDialog = {
@@ -74,6 +76,10 @@
 		console.log('SAVED TASK:', JSON.stringify(task, null, 2))
 		onUpdate(task);
 	};
+
+	if(isNew) {
+		console.log(JSON.stringify(task, null, 2))
+	}
 </script>
 
 <Dialog
@@ -84,7 +90,7 @@
 	onOkClick={dialog.onOkClick}
 />
 
-<button id={`task-${task.id}`} class={`task-container`}>
+<button id={`task-${task.id}`} class={`task-container ${isNew && 'ring-1 ring-white'}`}>
 	<div class={`m-2 flex h-12 gap-4 p-1`}>
 		<input
 			id={uniqid()}
@@ -92,6 +98,12 @@
 			class={`task-${task.id}-component`}
 			bind:value={task.description}
 			on:keydown={() => {
+				if (task.description !== unchangedTask.description) changing = true;
+			}}
+			on:keyup={() => {
+				if (task.description !== unchangedTask.description) changing = true;
+			}}
+			on:change={() => {
 				if (task.description !== unchangedTask.description) changing = true;
 			}}
 		/>

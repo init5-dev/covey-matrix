@@ -3,25 +3,27 @@
 	import Task from './components/Task/Task.svelte';
 	import CreateButton from './components/CreateButton.svelte';
 	import quadrantColor from '../colors';
-	import type { IState } from "$lib/components/Dialog/types";
-	import { calculateRelevance, calculateUrgency } from "$lib/utils/calculations";
+	import type { IState } from '$lib/components/Dialog/types';
+	import { calculateRelevance, calculateUrgency } from '$lib/utils/calculations';
 
 	export let htag: string = '';
 	export let vtag: string = '';
 	export let tasks: ITask[];
+	export let newTaskId: number;
 	export let color: TColor = 'none';
 	export let onUpdate: (task: ITask) => void;
 	export let onDelete: (task: ITask) => void;
 
+	let newTask = tasks.find((t) => t.id === newTaskId);
+
 	const calcPriority = (task: ITask) => {
-		const importance = calculateRelevance(task)
-		const urgency = calculateUrgency(task)
+		const importance = calculateRelevance(task);
+		const urgency = calculateUrgency(task);
 
-		return importance * (1 + urgency)
-	}
+		return importance * (1 + urgency);
+	};
 
-	
-	 tasks?.sort((a: ITask, b: ITask) => calcPriority(b) - calcPriority(a));
+	tasks?.sort((a: ITask, b: ITask) => calcPriority(b) - calcPriority(a));
 </script>
 
 <div class={`flex w-full gap-4 border border-gray-200 p-4 ${color && quadrantColor(color)}`}>
@@ -37,8 +39,19 @@
 		>
 			{#key tasks}
 				{#if tasks.length}
+					{#if newTask}
+						<Task ordinal={1} task={newTask} isNew {onUpdate} {onDelete} />
+					{/if}
 					{#each tasks as task, i}
-						<Task ordinal={i+1} {task} {onUpdate} {onDelete} />
+						{#if task.id !== newTaskId}
+							<Task
+								ordinal={i + 1 + (newTask ? 1 : 0)}
+								{task}
+								isNew={newTaskId === task.id}
+								{onUpdate}
+								{onDelete}
+							/>
+						{/if}
 					{/each}
 				{:else}
 					<div>
